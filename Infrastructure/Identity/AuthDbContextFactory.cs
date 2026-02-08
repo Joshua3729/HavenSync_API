@@ -10,8 +10,15 @@ namespace HavenSync_api.Infrastructure.Identity
         {
             var optionsBuilder = new DbContextOptionsBuilder<AuthDbContext>();
 
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+               .SetBasePath(Directory.GetCurrentDirectory())
+               .AddJsonFile("appsettings.json")
+               .Build();
+
+            var connectionString = configuration.GetConnectionString("AuthDb");
+
             optionsBuilder.UseSqlServer(
-                "Server=localhost\\SQLEXPRESS;Database=HavenSync_Auth;Trusted_Connection=True;TrustServerCertificate=True"
+                connectionString
             );
 
             return new AuthDbContext(optionsBuilder.Options);
