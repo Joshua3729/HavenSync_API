@@ -15,12 +15,18 @@ public class JwtTokenService : IJwtTokenService
 
     public JwtTokenService(IConfiguration config)
     {
-        _config = config;
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+               .SetBasePath(Directory.GetCurrentDirectory())
+               .AddJsonFile("appsettings.Development.json")
+               .Build();
+
+        _config = configuration;
     }
 
     public string GenerateToken(ApplicationUser user, IList<string> roles)
     {
         var jwt = _config.GetSection("Jwt");
+
 
         var claims = new List<Claim>
         {

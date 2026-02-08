@@ -1,4 +1,4 @@
-using HavenSync_api.Infrastructure.Identity;
+﻿using HavenSync_api.Infrastructure.Identity;
 using HavenSync_api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,9 +32,13 @@ builder.Services
         options.Password.RequireDigit = true;
         options.Password.RequireNonAlphanumeric = false;
     })
-    .AddRoles<IdentityRole<Guid>>()   
+    .AddRoles<IdentityRole<Guid>>()
+    .AddSignInManager() 
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
+
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
@@ -73,6 +77,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
