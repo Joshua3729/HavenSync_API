@@ -1,17 +1,27 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HavenSync_api.Controllers
+[ApiController]
+[Route("api/test-auth")]
+public class TestAuthController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class TestController : ControllerBase
-    {
-        [Authorize]
-        [HttpGet("secure")]
-        public IActionResult SecureEndpoint()
-        {
-            return Ok("You are authenticated");
-        }
-    }
+    [Authorize]
+    [HttpGet("any")]
+    public IActionResult AnyUser()
+        => Ok("Authenticated user");
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin")]
+    public IActionResult AdminOnly()
+        => Ok("Admin access");
+
+    [Authorize(Roles = "Landlord")]
+    [HttpGet("landlord")]
+    public IActionResult LandlordOnly()
+        => Ok("Landlord access");
+
+    [Authorize(Roles = "Tenant")]
+    [HttpGet("tenant")]
+    public IActionResult TenantOnly()
+        => Ok("Tenant access");
 }
