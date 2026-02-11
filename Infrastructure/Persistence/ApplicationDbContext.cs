@@ -26,15 +26,26 @@ namespace HavenSync_api.Infrastructure.Persistence
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Lease>()
-                .HasOne(l => l.Property)
-                .WithMany(p => p.Leases)
-                .HasForeignKey(l => l.PropertyId);
+            builder.Entity<Property>(entity =>
+            {
+                entity.Property(p => p.MonthlyRent)
+                    .HasPrecision(18, 2);
 
-            builder.Entity<Lease>()
-               .HasOne(l => l.Property)
-               .WithMany(p => p.Leases)
-               .HasForeignKey(l => l.PropertyId);
+                entity.Property(p => p.DepositAmount)
+                    .HasPrecision(18, 2);
+
+                entity.Property(p => p.LevyAmount)
+                    .HasPrecision(18, 2);
+
+                entity.Property(p => p.RatesAndTaxes)
+                    .HasPrecision(18, 2);
+
+                entity.Property(p => p.FloorSizeSqm)
+                    .HasPrecision(10, 2);
+
+                entity.Property(p => p.ErfSizeSqm)
+                    .HasPrecision(10, 2);
+            });
 
         }
     }
