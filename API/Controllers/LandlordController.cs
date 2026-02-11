@@ -1,7 +1,9 @@
-﻿using HavenSync_api.Infrastructure.Persistence;
-using HavenSync_api.Domain.Entities;
+﻿using HavenSync_api.Domain.Entities;
+using HavenSync_api.DTOs.Application;
+using HavenSync_api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace HavenSync_api.API.Controllers
@@ -63,5 +65,52 @@ namespace HavenSync_api.API.Controllers
 
             return Ok(property);
         }
+
+
+        [Authorize(Roles = "Landlord")]
+        [HttpPut("properties/{id}")]
+        public async Task<IActionResult> EditProperty(Guid id, [FromBody] UpdatePropertyDto request)
+        {
+            var landlordId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (landlordId == null)
+                return Unauthorized();
+
+            var property = await _context.Properties
+                .FirstOrDefaultAsync(p => p.Id == id && p.LandlordId == Guid.Parse(landlordId));
+
+            if (property == null)
+                return NotFound("Property not found");
+
+            property.Name = request.Name;
+            property.StreetAddress = request.StreetAddress;
+            property.Suburb = request.Suburb;
+            property.City = request.City;
+            property.Province = request.Province;
+            property.PostalCode = request.PostalCode;
+
+            property.PropertyType = request.PropertyType;
+            property.Bedrooms = request.Bedrooms;
+            property.Bathrooms = request.Bathrooms;
+            property.ParkingSpaces = request.ParkingSpaces;
+
+            property.FloorSizeSqm = request.FloorSizeSqm;
+            property.ErfSizeSqm = request.ErfSizeSqm;
+
+            property.IsFurnished = request.IsFurnished;
+
+            property.MonthlyRent = request.MonthlyRent;
+            property.DepositAmount = request.DepositAmount;
+            property.LevyAmount = request.LevyAmount;
+            property.RatesAndTaxes = request.RatesAndTaxes;
+
+            property.UtilitiesIncluded = request.UtilitiesIncluded;
+            property.PrepaidElectricity = request.PrepaidElectricity;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(property);
+        }
+
+
     }
 }
